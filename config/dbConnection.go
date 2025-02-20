@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/AkulinIvan/go-test/model"
+	"github.com/AkulinIvan/Golang/model"
 	"github.com/joho/godotenv"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
@@ -28,7 +28,7 @@ func PostgresConnection() {
 	}
 	DB = db
 	fmt.Println("db connection successfully")
-	AutoMigrate(db)
+	//AutoMigrate(db)
 }
 
 func AutoMigrate(connection *gorm.DB) {

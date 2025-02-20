@@ -1,16 +1,15 @@
 package main
 
 import (
-	db "github.com/AkulinIvan/go-test/config"
-	routes "github.com/AkulinIvan/go-test/routes"
-	"github.com/gofiber/fiber/v3"
+	db "github.com/AkulinIvan/Golang/config"
+	routes "github.com/AkulinIvan/Golang/routes"
+	"github.com/gofiber/fiber/v2"
 )
 
 func main() {
 	db.PostgresConnection()
 
 	app := fiber.New()
-	app.Use(app)
 
 	routes.Setup(app)
 

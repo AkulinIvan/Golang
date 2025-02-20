@@ -1,2 +1,1 @@
-app := fiber.New()
-	// app.Use(app)
+github.com/gofiber/fiber/middleware
