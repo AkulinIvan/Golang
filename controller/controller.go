@@ -1,7 +1,6 @@
 package controller
 
 import (
-	"strconv"
 	"time"
 
 	db "github.com/AkulinIvan/Golang/config"
@@ -54,11 +53,8 @@ func CreateTask(c *fiber.Ctx) error {
 // Выводим список задач
 func ListOfTasks(c *fiber.Ctx) error {
 	var task []model.Tasks
-	limit, _ := strconv.Atoi(c.Query("limit"))
-	skip, _ := strconv.Atoi(c.Query("skip"))
-	var count int64
 
-	db.DB.Select("*").Limit(limit).Offset(skip).Find(&task).Count(&count)
+	db.DB.Find(&task)
 	return c.Status(200).JSON(
 		fiber.Map{
 			"success": true,
@@ -76,7 +72,7 @@ func UpdateTask(c *fiber.Ctx) error {
 	db.DB.Find(&task, "id=?", taskId)
 	//валидация для проверки id задачи
 
-	if task.Title == "" {
+	if task.Title != "" {
 		return c.Status(404).JSON(fiber.Map{
 			"success": false,
 			"message": "Task not found",
@@ -98,7 +94,7 @@ func UpdateTask(c *fiber.Ctx) error {
 	task.Title = updateTask.Title
 	db.DB.Save(&task)
 
-	return c.Status(404).JSON(fiber.Map{
+	return c.Status(200).JSON(fiber.Map{
 		"success": true,
 		"message": "success",
 		"data":    task,
@@ -110,18 +106,11 @@ func UpdateTask(c *fiber.Ctx) error {
 func DeleteTask(c *fiber.Ctx) error {
 	taskId := c.Params("taskId")
 	var task model.Tasks
-
-	db.DB.Where("id=?", taskId).First(&task)
-
-	if task.Id == 0 {
-		return c.Status(404).JSON(fiber.Map{
-			"success": false,
-			"message": "Task not found",
-		})
+	result := db.DB.Delete(&task, "id = ?", taskId)
+	if result.RowsAffected == 0 {
+		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{"status": "fail", "message": "No task with that Id exists"})
+	} else if result.Error != nil {
+		return c.Status(fiber.StatusBadGateway).JSON(fiber.Map{"status": "error", "message": result.Error})
 	}
-	db.DB.Where("id=?", taskId).Delete(&task)
-	return c.Status(200).JSON(fiber.Map{
-		"success": true,
-		"message": "Task was deleted successfuly",
-	})
+	return c.SendStatus(fiber.StatusNoContent)
 }

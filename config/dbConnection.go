@@ -11,7 +11,7 @@ import (
 )
 
 var DB *gorm.DB
-
+//подключение к базе данных
 func PostgresConnection() {
 	godotenv.Load()
 	dbname := os.Getenv("POSTGRES_DBNAME")
@@ -30,7 +30,7 @@ func PostgresConnection() {
 	fmt.Println("db connection successfully")
 	AutoMigrate(db)
 }
-
+//автомиграция при каждом запуске приложения
 func AutoMigrate(connection *gorm.DB) {
 	connection.Debug().AutoMigrate(
 		&model.Tasks{},

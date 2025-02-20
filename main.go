@@ -7,6 +7,7 @@ import (
 )
 
 func main() {
+
 	db.PostgresConnection()
 
 	app := fiber.New()

@@ -30,7 +30,7 @@ func (s StatusType) String() string {
 	case DoneStatus:
 		return "done"
 	default:
-		return ""
+		return "new"
 	}
 }
 
@@ -44,7 +44,7 @@ func ParseStatus(statusStr string) (StatusType, error) {
 }
 
 type Tasks struct {
-	Id          uint       `json:"id"`
+	Id          uint32     `json:"id"`
 	Title       string     `json:"title"`
 	Description string     `json:"description"`
 	Status      StatusType `json:"status"`
