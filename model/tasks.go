@@ -1,26 +1,53 @@
 package model
 
 import (
+	"fmt"
+	"strings"
 	"time"
-
-	"gorm.io/gorm"
 )
 
 // Определение перечисления
-type Status string
+type StatusType int
 
 const (
-	New         Status = "new"
-	In_progress Status = "in_progress"
-	Done        Status = "done"
+	NewStatus StatusType = iota + 1
+	InProgressStatus
+	DoneStatus
 )
 
+var statusMap = map[string]StatusType{
+	"new":         NewStatus,
+	"in_progress": InProgressStatus,
+	"done":        DoneStatus,
+}
+
+func (s StatusType) String() string {
+	switch s {
+	case NewStatus:
+		return "new"
+	case InProgressStatus:
+		return "in_progress"
+	case DoneStatus:
+		return "done"
+	default:
+		return ""
+	}
+}
+
+func ParseStatus(statusStr string) (StatusType, error) {
+	statusStr = strings.ToLower(strings.TrimSpace(statusStr))
+	s, ok := statusMap[statusStr]
+	if !ok {
+		return 0, fmt.Errorf("invalid status: %s", statusStr)
+	}
+	return s, nil
+}
+
 type Tasks struct {
-	gorm.Model
-	Id          uint      `gorm:"primaryKey"`
-	Title       string    `gorm:"size:64"`
-	Description string    `gorm:"size:255"`
-	Status      Status    `gorm:"default:new"`
-	Created_at  time.Time `gorm:"index"`
-	Updated_at  time.Time `gorm:"index"`
+	Id          uint       `json:"id"`
+	Title       string     `json:"title"`
+	Description string     `json:"description"`
+	Status      StatusType `json:"status"`
+	Created_at  time.Time  `json:"created_at"`
+	Updated_at  time.Time  `json:"updated_at"`
 }

@@ -1,1 +1,0 @@
-github.com/gofiber/fiber/middleware

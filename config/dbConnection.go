@@ -28,7 +28,7 @@ func PostgresConnection() {
 	}
 	DB = db
 	fmt.Println("db connection successfully")
-	//AutoMigrate(db)
+	AutoMigrate(db)
 }
 
 func AutoMigrate(connection *gorm.DB) {
