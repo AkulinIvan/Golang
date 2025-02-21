@@ -12,9 +12,9 @@ func Setup(app *fiber.App) {
 	app.Get("/tasks/", Controller.ListOfTasks)
 
 	//Обновляем/изменяем задачу
-	app.Put("/tasks/:Id", Controller.UpdateTask)
+	app.Put("/tasks/:id", Controller.UpdateTask)
 	//Удаляем задачу
-	app.Delete("/tasks/:Id", Controller.DeleteTask)
+	app.Delete("/tasks/:id", Controller.DeleteTask)
 	//Слушаем приложение на порту 3000
 	app.Listen(":3000")
 }

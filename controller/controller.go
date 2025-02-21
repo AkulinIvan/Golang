@@ -36,6 +36,7 @@ func CreateTask(c *fiber.Ctx) error {
 	//Сохранение задачи в бд
 
 	task := model.Tasks{
+
 		Title:       data["Title"],
 		Description: data["Description"],
 		Status:      model.NewStatus,
@@ -67,10 +68,10 @@ func ListOfTasks(c *fiber.Ctx) error {
 // Изменяем/обновляем задачу
 
 func UpdateTask(c *fiber.Ctx) error {
-	taskId := c.Params("taskId")
-	var task *model.Tasks
+	taskId := c.Params("id")
+	var task model.Tasks
 
-	db.DB.Find(&task, taskId)
+	db.DB.Find(&task, "id = ?", taskId)
 
 	if task.Title == "" {
 		return c.Status(404).JSON(fiber.Map{
@@ -124,10 +125,10 @@ func UpdateTask(c *fiber.Ctx) error {
 
 // Удаляем задачу
 func DeleteTask(c *fiber.Ctx) error {
-	taskId := c.Params("taskId")
+	taskId := c.Params("id")
 	var task model.Tasks
 
-	db.DB.First(&task, taskId)
+	db.DB.Find(&task, "id = ?", taskId)
 	if task.Title == "" {
 		return c.Status(404).JSON(fiber.Map{
 			"success": false,

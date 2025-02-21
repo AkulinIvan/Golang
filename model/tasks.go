@@ -27,7 +27,7 @@ func (s StatusType) String() string {
 }
 
 type Tasks struct {
-	Id          string     `json:"id"`
+	Id          uint        `json:"id"`
 	Title       string     `json:"title"`
 	Description string     `json:"description"`
 	Status      StatusType `json:"status"`
