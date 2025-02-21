@@ -59,20 +59,20 @@ func ListOfTasks(c *fiber.Ctx) error {
 		fiber.Map{
 			"success": true,
 			"message": "Tasks list api",
-			"data":    task,
+			"task":    task,
 		})
 
 }
 
 // Изменяем/обновляем задачу
+
 func UpdateTask(c *fiber.Ctx) error {
 	taskId := c.Params("taskId")
-	var task model.Tasks
+	var task *model.Tasks
 
-	db.DB.Find(&task, "id=?", taskId)
-	//валидация для проверки id задачи
+	db.DB.Find(&task, taskId)
 
-	if task.Title != "" {
+	if task.Title == "" {
 		return c.Status(404).JSON(fiber.Map{
 			"success": false,
 			"message": "Task not found",
@@ -82,35 +82,56 @@ func UpdateTask(c *fiber.Ctx) error {
 	var updateTask model.Tasks
 	err := c.BodyParser(&updateTask)
 	if err != nil {
-		return err
+		return c.Status(400).JSON(
+			fiber.Map{
+				"success": false,
+				"message": err,
+			})
 	}
 	if updateTask.Title == "" {
-		return c.Status(404).JSON(fiber.Map{
-			"success": false,
-			"message": "Task title is required",
-		})
+		return c.Status(400).JSON(
+			fiber.Map{
+				"success": false,
+				"message": "Tasks title is required",
+			})
 	}
+	if updateTask.Description == "" {
+		return c.Status(400).JSON(
+			fiber.Map{
+				"success": false,
+				"message": "Tasks description is required",
+			})
+	}
+	if updateTask.Status == "" {
+		return c.Status(400).JSON(
+			fiber.Map{
+				"success": false,
+				"message": "Tasks status is required",
+			})
+	}
+	//Сохранение задачи в бд
 
 	task.Title = updateTask.Title
+	task.Description = updateTask.Description
+	task.Status = updateTask.Status
 	db.DB.Save(&task)
-
 	return c.Status(200).JSON(fiber.Map{
 		"success": true,
-		"message": "success",
-		"data":    task,
+		"message": "Task changed successfully",
+		"task":    task,
 	})
-
 }
 
 // Удаляем задачу
 func DeleteTask(c *fiber.Ctx) error {
 	taskId := c.Params("taskId")
 	var task model.Tasks
-	result := db.DB.Delete(&task, "id = ?", taskId)
-	if result.RowsAffected == 0 {
-		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{"status": "fail", "message": "No task with that Id exists"})
-	} else if result.Error != nil {
-		return c.Status(fiber.StatusBadGateway).JSON(fiber.Map{"status": "error", "message": result.Error})
-	}
-	return c.SendStatus(fiber.StatusNoContent)
+
+	db.DB.First(&task, taskId)
+
+	db.DB.Delete(&task)
+	return c.Status(200).JSON(fiber.Map{
+		"success": true,
+		"message": "Task was deleted successfuly",
+	})
 }

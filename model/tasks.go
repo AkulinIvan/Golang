@@ -1,25 +1,17 @@
 package model
 
 import (
-	"fmt"
-	"strings"
 	"time"
 )
 
 // Определение перечисления
-type StatusType int
+type StatusType string
 
 const (
-	NewStatus StatusType = iota + 1
-	InProgressStatus
-	DoneStatus
+	NewStatus        StatusType = "new"
+	InProgressStatus StatusType = "in_progress"
+	DoneStatus       StatusType = "done"
 )
-
-var statusMap = map[string]StatusType{
-	"new":         NewStatus,
-	"in_progress": InProgressStatus,
-	"done":        DoneStatus,
-}
 
 func (s StatusType) String() string {
 	switch s {
@@ -34,17 +26,8 @@ func (s StatusType) String() string {
 	}
 }
 
-func ParseStatus(statusStr string) (StatusType, error) {
-	statusStr = strings.ToLower(strings.TrimSpace(statusStr))
-	s, ok := statusMap[statusStr]
-	if !ok {
-		return 0, fmt.Errorf("invalid status: %s", statusStr)
-	}
-	return s, nil
-}
-
 type Tasks struct {
-	Id          uint32     `json:"id"`
+	Id          string     `json:"id"`
 	Title       string     `json:"title"`
 	Description string     `json:"description"`
 	Status      StatusType `json:"status"`
