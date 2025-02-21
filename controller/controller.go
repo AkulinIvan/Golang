@@ -128,7 +128,12 @@ func DeleteTask(c *fiber.Ctx) error {
 	var task model.Tasks
 
 	db.DB.First(&task, taskId)
-
+	if task.Title == "" {
+		return c.Status(404).JSON(fiber.Map{
+			"success": false,
+			"message": "Task not found",
+		})
+	}
 	db.DB.Delete(&task)
 	return c.Status(200).JSON(fiber.Map{
 		"success": true,
